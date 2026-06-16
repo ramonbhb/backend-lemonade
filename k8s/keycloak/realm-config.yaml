@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+  namespace: lemonade
+data:
+  realm.json: |
+    {
+      "realm": "lemonade",
+      "enabled": true,
+      "clients": [
+        {
+          "clientId": "lemonade-api",
+          "enabled": true,
+          "publicClient": false,
+          "directAccessGrantsEnabled": true,
+          "protocol": "openid-connect"
+        }
+      ],
+      "roles": {
+        "realm": [
+          {"name": "admin"},
+          {"name": "data_scientist"},
+          {"name": "auditor"}
+        ]
+      }
+    }

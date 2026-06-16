@@ -1,0 +1,874 @@
+
+library: br.ufmg.dcc.speed.Lemonade 
+  methods:
+    - name: evaluator
+      signature: Dataframe evaluator(Integer task_type, String bin_metric, String multi_metric, String reg_metric, String clust_metric)
+      description: Avalia um modelo segundo alguma métrica. (id=2351)
+      parameters:
+        - name: task_type
+          description: Métrica. (widget: lookup)
+          type: Integer
+          required: True
+        - name: bin_metric
+          description: Métrica (widget: features)
+          type: String
+          required: True
+        - name: multi_metric
+          description: Métrica (widget: features)
+          type: String
+          required: True
+        - name: reg_metric
+          description: Métrica (widget: features)
+          type: String
+          required: True
+        - name: clust_metric
+          description: Métrica (widget: features)
+          type: String
+          required: True
+      returns:
+
+    - name: naive_bayes
+      signature: Dataframe naive_bayes(String model_type, String thresholds, Float smoothing, String[] weight_attr)
+      description: Classificador Naive Bayes. (id=2359)
+      parameters:
+        - name: model_type
+          description: Model type (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - multinomial: Multinomial (default)
+           - bernoulli: Bernoulli
+        - name: thresholds
+          description: Thresholds in multi-class classification to adjust the probability of predicting each class. Array must have length equal to the number of classes. (widget: text)
+          type: String
+          required: False
+        - name: smoothing
+          description: The Laplace smoothing parameter (0 for no smoothing). (widget: decimal)
+          type: Float
+          required: False
+        - name: weight_attr
+          description: Weight attribute (widget: attribute-selector)
+          type: String[]
+          required: False
+      returns:
+
+    - name: generalized_linear_regressor
+      signature: Dataframe generalized_linear_regressor(String family_link, String solver, Float reg_param)
+      description: Regressão linear generalizada. (id=2368)
+      parameters:
+        - name: family_link
+          description: Family/link prediction (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - binomial:logit: Binomial / logit
+           - binomial:probit: Binomial / probit
+           - binomial:cloglog: Binomial / cloglog
+           - gamma:inverse: Gamma / inverse
+           - gamma:identity: Gamma / identity
+           - gamma:log: Gamma / log
+           - gaussian:identity: Gaussian / Identity
+           - gaussian:log: Gaussian / log
+           - gaussian:inverse: Gaussian / inverse
+           - poisson:log: Poisson / log
+           - poisson:identity: Poisson / identity
+           - poisson:sqrt: Poisson / sqrt
+        - name: solver
+          description: Solver (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - irls: IRLS (Iteratively reweighted least squares)
+        - name: reg_param
+          description: Regularization (widget: decimal)
+          type: Float
+          required: False
+      returns:
+
+    - name: linear_regression
+      signature: Dataframe linear_regression(String loss, Integer max_iter, String solver, Float elastic_net, Float reg_param, Float epsilon, Float tolerance, Boolean standardization, Boolean fit_intercept)
+      description: Regressão linear (id=2364)
+      parameters:
+        - name: loss
+          description: Função de perda a ser otimizada. (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - squaredError: Squared error
+           - huber: Huber method
+        - name: max_iter
+          description: Max. iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: solver
+          description: Solver (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - auto: Auto (selected automatically)
+           - normal: Normal Equation
+           - l-bfgs: Limited-memory BFGS
+        - name: elastic_net
+          description: ElasticNet mixing (widget: decimal)
+          type: Float
+          required: False
+        - name: reg_param
+          description: Parâmetro de regularização (λ) (widget: decimal)
+          type: Float
+          required: False
+        - name: epsilon
+          description: Parâmetro que controla a robustez. Deve ser maior que 1.0. (widget: decimal)
+          type: Float
+          required: False
+        - name: tolerance
+          description: Tolerância de convergência para algoritmo iterativo. Deve ser maior ou igual a 0.0. (widget: decimal)
+          type: Float
+          required: False
+        - name: standardization
+          description: Indica se é para padronizar os atributos preditivos antes de realizar o treino. (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: fit_intercept
+          description: Se desligado, define y-intercept igual a 0. Se ligado, y-intercept é determinado pela lina de melhor ajuste. (widget: checkbox)
+          type: Boolean
+          required: False
+      returns:
+
+    - name: features_reduction
+      signature: Dataframe features_reduction(Integer method, Integer k)
+      description: Permite reduzir o número de atributros preditivos. (id=2352)
+      parameters:
+        - name: method
+          description: Método de redução. (widget: lookup)
+          type: Integer
+          required: True
+        - name: k
+          description: Número de componentes principais (k). (widget: integer)
+          type: Integer
+          required: True
+      returns:
+
+    - name: perceptron
+      signature: Dataframe perceptron(Integer block_size, String layers, Integer max_iter, Integer seed, String solver)
+      description: Classificador Perceptron. (id=2360)
+      parameters:
+        - name: block_size
+          description: Block size (widget: integer)
+          type: Integer
+          required: False
+        - name: layers
+          description: Sizes of layers from input layer to output layer E.g., "780, 100, 10" (without quotes) means 780 inputs, one hidden layer with 100 neurons and output layer of 10 neurons. (widget: text)
+          type: String
+          required: True
+        - name: max_iter
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Seed (random number generation) (widget: integer)
+          type: Integer
+          required: False
+        - name: solver
+          description: Solver (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - l-bfgs
+           - gd
+      returns:
+
+    - name: decision_tree_regressor
+      signature: Dataframe decision_tree_regressor(Integer max_depth, Integer min_instance, Float min_info_gain)
+      description: Regressão por árvore de decisão. (id=2369)
+      parameters:
+        - name: max_depth
+          description: Max. depth. (widget: integer)
+          type: Integer
+          required: False
+        - name: min_instance
+          description: Min instances per node. (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min. info gain. (widget: decimal)
+          type: Float
+          required: False
+      returns:
+
+    - name: read_data
+      signature: Dataframe read_data(Integer data_source)
+      description: Ler dados (id=2100)
+      parameters:
+        - name: data_source
+          description: Fonte de dados a ser utilizada como entrada para os dados. (widget: lookup)
+          type: Integer
+          required: True
+      returns:
+
+    - name: gaussian_mix
+      signature: Dataframe gaussian_mix(Integer number_of_clusters, Float tolerance, Integer max_iterations)
+      description: Agrupamento misturas gaussianas. (id=2356)
+      parameters:
+        - name: number_of_clusters
+          description: Number of clusters (K) (widget: integer)
+          type: Integer
+          required: True
+        - name: tolerance
+          description: Convergency tolerance for the within-cluster sums of point-to-centroid distances. (widget: decimal)
+          type: Float
+          required: False
+        - name: max_iterations
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: True
+      returns:
+
+    - name: isotonic_regression
+      signature: Dataframe isotonic_regression(String isotonic)
+      description: Regressão isotônica. (id=2365)
+      parameters:
+        - name: isotonic
+          description: Isotonic (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - True
+           - False
+      returns:
+
+    - name: grid
+      signature: Dataframe grid(Integer strategy, Boolean random_grid, Integer seed, Integer max_iterations, Integer max_search_time, Integer parallelism)
+      description: Permite definir uma grade de parâmetros. (id=2353)
+      parameters:
+        - name: strategy
+          description: Estratégia de busca em grade. (widget: lookup)
+          type: Integer
+          required: True
+        - name: random_grid
+          description: Usar grade aleatória. (widget: checkbox)
+          type: Boolean
+          required: True
+        - name: seed
+          description: Semente aleatória. (widget: lookup)
+          type: Integer
+          required: True
+        - name: max_iterations
+          description: Número máximo de iterações. (widget: integer)
+          type: Integer
+          required: True
+        - name: max_search_time
+          description: Tempo máximo de busca. (widget: integer)
+          type: Integer
+          required: True
+        - name: parallelism
+          description: Paralelismo (widget: integer)
+          type: Integer
+          required: True
+      returns:
+
+    - name: random_forest_classifier
+      signature: Dataframe random_forest_classifier(Boolean cache_node_ids, String impurity, Integer check_point_interval, String feature_subset_strategy, Integer max_bins, Integer max_depth, Float min_info_gain, Integer min_instances_per_node, Integer num_trees, Integer seed, Float subsampling_rate)
+      description: Classificador Random Forest. (id=2361)
+      parameters:
+        - name: cache_node_ids
+          description: Cache node ids. (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: impurity
+          description: Impurity is the measure based on which the (locally) optimal condition is chosen. (widget: dropdown)
+          type: String
+          required: True
+          allowedValues:
+           - gini: Gini impurity
+           - entropy: Entropy
+        - name: check_point_interval
+          description: Check point interval (cache) (widget: integer)
+          type: Integer
+          required: False
+        - name: feature_subset_strategy
+          description: Feature subset strategy (widget: select2)
+          type: String
+          required: False
+        - name: max_bins
+          description: Max bins (widget: integer)
+          type: Integer
+          required: False
+        - name: max_depth
+          description: Max depth (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min info gain (widget: decimal)
+          type: Float
+          required: False
+        - name: min_instances_per_node
+          description: Min instances per node (widget: integer)
+          type: Integer
+          required: False
+        - name: num_trees
+          description: Number of trees (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Semente para a geração de números aleatórios. (widget: integer)
+          type: Integer
+          required: False
+        - name: subsampling_rate
+          description: Subsampling rate (widget: decimal)
+          type: Float
+          required: False
+      returns:
+
+    - name: fm_classifier
+      signature: Dataframe fm_classifier(Integer factor_size, Integer seed, Boolean fit_linear, Float tolerance, Float min_batch, Float init_std, Integer max_iter, Float threshold, String solver, Integer step_size, Float reg_param)
+      description: Classificador Factorization machines. (id=2245)
+      parameters:
+        - name: factor_size
+          description: Size of the factorization (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Seed for random numbers (widget: integer)
+          type: Integer
+          required: False
+        - name: fit_linear
+          description: Whether to fit a linear term (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: tolerance
+          description: Convergence tolerance (widget: decimal)
+          type: Float
+          required: False
+        - name: min_batch
+          description: Fraction of data to be used for each SGD iteration (widget: decimal)
+          type: Float
+          required: False
+        - name: init_std
+          description: Standard deviation for weight initialization (widget: decimal)
+          type: Float
+          required: False
+        - name: max_iter
+          description: Maximum number of iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: threshold
+          description: Threshold for binary classification (widget: decimal)
+          type: Float
+          required: False
+        - name: solver
+          description: Optimization solver (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - adamW
+           - gd
+        - name: step_size
+          description: Step size for optimization (widget: integer)
+          type: Integer
+          required: False
+        - name: reg_param
+          description: Regularization parameter (λ >= 0) (widget: decimal)
+          type: Float
+          required: False
+      returns:
+
+    - name: sample
+      signature: Dataframe sample(String type, Integer value, Float fraction, Integer seed)
+      description: Permite definir a amostragem dos dados. (id=2110)
+      parameters:
+        - name: type
+          description: Type of sampling or partition (widget: dropdown)
+          type: String
+          required: True
+          allowedValues:
+           - percent: Sample a random percentage of data
+           - value: Sample N random records from data
+           - head: Extract top N records from data
+        - name: value
+          description: Total of records to be retrieved (widget: integer)
+          type: Integer
+          required: True
+        - name: fraction
+          description: Percentage of data to be sampled (widget: percentage)
+          type: Float
+          required: True
+        - name: seed
+          description: Seed used to initialize the random number generator. (widget: integer)
+          type: Integer
+          required: False
+      returns:
+
+    - name: decision_tree_classifier
+      signature: Dataframe decision_tree_classifier(Boolean cache_node_ids, Integer check_point_interval, String impurity, Integer max_bins, Integer max_depth, Float min_info_gain, Integer min_instances_per_node)
+      description: Classificador árvore de decisão. (id=2357)
+      parameters:
+        - name: cache_node_ids
+          description: Cache node ids. (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: check_point_interval
+          description: Check point interval (cache) (widget: integer)
+          type: Integer
+          required: False
+        - name: impurity
+          description: Impurity (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - entropy: Entropy
+           - gini: Gini
+        - name: max_bins
+          description: Max bins (widget: integer)
+          type: Integer
+          required: False
+        - name: max_depth
+          description: Max depth (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min info gain (widget: decimal)
+          type: Float
+          required: False
+        - name: min_instances_per_node
+          description: Min instances per node (widget: integer)
+          type: Integer
+          required: False
+      returns:
+
+    - name: gbt_regressor
+      signature: Dataframe gbt_regressor(Integer max_depth, Integer min_instance, Float min_info_gain, Integer seed)
+      description: Regressão GBT (Gradient Boosted Tree). (id=2366)
+      parameters:
+        - name: max_depth
+          description: Max. depth (widget: integer)
+          type: Integer
+          required: False
+        - name: min_instance
+          description: Min. instance (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min. info gain (widget: decimal)
+          type: Float
+          required: False
+        - name: seed
+          description: Seed (widget: integer)
+          type: Integer
+          required: False
+      returns:
+
+    - name: features
+      signature: Dataframe features(String features)
+      description: Permite configurar os atributos preditivos (id=2354)
+      parameters:
+        - name: features
+          description: Atributos preditivos. (widget: features)
+          type: String
+          required: True
+      returns:
+
+    - name: logistic_regression
+      signature: Dataframe logistic_regression(Integer aggregation_depth, Float elastic_net_param, Boolean fit_intercept, Float threshold, String thresholds, Integer max_iter, Float tol, String[] weight_col, Float reg_param, String family)
+      description: Regressão logística. (id=2362)
+      parameters:
+        - name: aggregation_depth
+          description: Aggregation depth (widget: integer)
+          type: Integer
+          required: False
+        - name: elastic_net_param
+          description: Elastic Net param (widget: decimal)
+          type: Float
+          required: False
+        - name: fit_intercept
+          description: Fit intercept (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: threshold
+          description: Threshold in binary classification prediction (widget: decimal)
+          type: Float
+          required: False
+        - name: thresholds
+          description: Thresholds in multi-class classification to adjust the probability of predicting each class. (widget: text)
+          type: String
+          required: False
+        - name: max_iter
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: tol
+          description: Tolerance (widget: decimal)
+          type: Float
+          required: False
+        - name: weight_col
+          description: Weight attribute (widget: attribute-selector)
+          type: String[]
+          required: False
+        - name: reg_param
+          description: Regularization parameter (widget: decimal)
+          type: Float
+          required: False
+        - name: family
+          description: Family (widget: dropdown)
+          type: String
+          required: True
+          allowedValues:
+           - auto: Auto
+           - binomial: Binomial
+           - multinomial: Multinomial
+      returns:
+
+    - name: fm_regression
+      signature: Dataframe fm_regression(Integer factor_size, Integer seed, Boolean fit_linear, Float tolerance, Float min_batch, Float init_std, Integer max_iter, Float threshold, String solver, Integer step_size, Float reg_param)
+      description: Regressão Factorization machines. (id=2246)
+      parameters:
+        - name: factor_size
+          description: Size of the factorization (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Seed for random numbers (widget: integer)
+          type: Integer
+          required: False
+        - name: fit_linear
+          description: Whether to fit a linear term (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: tolerance
+          description: Convergence tolerance (widget: decimal)
+          type: Float
+          required: False
+        - name: min_batch
+          description: Fraction of data to be used for each SGD iteration (widget: decimal)
+          type: Float
+          required: False
+        - name: init_std
+          description: Standard deviation for weight initialization (widget: decimal)
+          type: Float
+          required: False
+        - name: max_iter
+          description: Maximum number of iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: threshold
+          description: Threshold for binary classification (widget: decimal)
+          type: Float
+          required: False
+        - name: solver
+          description: Optimization solver (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - adamW
+           - gd
+        - name: step_size
+          description: Step size for optimization (widget: integer)
+          type: Integer
+          required: False
+        - name: reg_param
+          description: Regularization parameter (λ >= 0) (widget: decimal)
+          type: Float
+          required: False
+      returns:
+
+    - name: split
+      signature: Dataframe split(Integer strategy, Integer seed, Float ratio, Integer folds)
+      description: Divide os dados de entrada entre treino e teste. (id=2350)
+      parameters:
+        - name: strategy
+          description: Estratégia para divisão entre treino e teste. (widget: lookup)
+          type: Integer
+          required: True
+        - name: seed
+          description: Semente aleatória. (widget: lookup)
+          type: Integer
+          required: True
+        - name: ratio
+          description: Razão treino/teste (widget: decimal)
+          type: Float
+          required: True
+        - name: folds
+          description: Número de folds. (widget: integer)
+          type: Integer
+          required: True
+      returns:
+
+    - name: gbt_classifier
+      signature: Dataframe gbt_classifier(Boolean cache_node_ids, Integer check_point_interval, String loss_type, Integer max_bins, Integer max_depth, Float subsampling_rate, Integer max_iter, Float min_info_gain, Integer min_instances_per_node, Integer step_size, Integer seed)
+      description: Classificador GBT (Gradient Boosted Tree) (id=2358)
+      parameters:
+        - name: cache_node_ids
+          description: Cache node ids. (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: check_point_interval
+          description: Check point interval (cache) (widget: integer)
+          type: Integer
+          required: False
+        - name: loss_type
+          description: Loss type (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - logistic: Logistic
+        - name: max_bins
+          description: Max bins (widget: integer)
+          type: Integer
+          required: False
+        - name: max_depth
+          description: Max depth (widget: integer)
+          type: Integer
+          required: False
+        - name: subsampling_rate
+          description: Subsampling rate (widget: decimal)
+          type: Float
+          required: False
+        - name: max_iter
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min info gain (widget: decimal)
+          type: Float
+          required: False
+        - name: min_instances_per_node
+          description: Min instances per node (widget: integer)
+          type: Integer
+          required: False
+        - name: step_size
+          description: Step size (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Semente para a geração de números aleatórios. (widget: integer)
+          type: Integer
+          required: False
+      returns:
+
+    - name: random_forest_regressor
+      signature: Dataframe random_forest_regressor(Integer max_depth, Integer max_bins, Float min_info_gain, Integer num_trees, String feature_subset_strategy)
+      description: Regressão Random Forest. (id=2367)
+      parameters:
+        - name: max_depth
+          description: Max. depth (widget: integer)
+          type: Integer
+          required: False
+        - name: max_bins
+          description: Max. bins (widget: integer)
+          type: Integer
+          required: False
+        - name: min_info_gain
+          description: Min. info gain (widget: decimal)
+          type: Float
+          required: False
+        - name: num_trees
+          description: Number of trees (widget: integer)
+          type: Integer
+          required: False
+        - name: feature_subset_strategy
+          description: Feature subset strategy (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - auto: auto
+           - all: all
+           - onethird: onethird
+           - sqrt: sqrt
+           - log2: log2
+      returns:
+
+    - name: k_means
+      signature: Dataframe k_means(Integer number_of_clusters, Float tolerance, String type, String init_mode, Integer max_iterations, Integer seed, String distance)
+      description: Agrupamento K-Means (id=2355)
+      parameters:
+        - name: number_of_clusters
+          description: Number of clusters (K) (widget: integer)
+          type: Integer
+          required: True
+        - name: tolerance
+          description: Convergency tolerance for the within-cluster sums of point-to-centroid distances. (widget: decimal)
+          type: Float
+          required: False
+        - name: type
+          description: Type (widget: dropdown)
+          type: String
+          required: True
+          allowedValues:
+           - kmeans: Traditional K-Means
+           - bisecting: Bisecting K-Means
+        - name: init_mode
+          description: How to generate initial centroids (widget: dropdown)
+          type: String
+          required: True
+          allowedValues:
+           - k-means||: kmeans|| (kmeans++ variant)
+           - random: random
+        - name: max_iterations
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: True
+        - name: seed
+          description: Seed (widget: integer)
+          type: Integer
+          required: False
+        - name: distance
+          description: The distance measure (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - euclidean
+           - cosine
+      returns:
+
+    - name: svm
+      signature: Dataframe svm(Integer max_iter, Boolean standardization, Float threshold, Float tol, String[] weight_attr)
+      description: Classificador SVM (id=2363)
+      parameters:
+        - name: max_iter
+          description: Max number of iterations (>=0). (widget: integer)
+          type: Integer
+          required: False
+        - name: standardization
+          description: Whether to standardize the training features before fitting the model. (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: threshold
+          description: The threshold in binary classification applied to the linear model prediction (widget: decimal)
+          type: Float
+          required: False
+        - name: tol
+          description: The convergence tolerance for iterative algorithms (>= 0). (widget: decimal)
+          type: Float
+          required: False
+        - name: weight_attr
+          description: Attribute with weights. If empty, all instances have the same weight (1.0); (widget: attribute-selector)
+          type: String[]
+          required: False
+      returns:
+
+    - name: bkm_clustering
+      signature: Dataframe bkm_clustering(Integer number_of_clusters, Float tolerance, Integer max_iterations, Integer seed, Float min_divisible_clusterSize, String distance)
+      description: Bissecção Kmeans. (id=2255)
+      parameters:
+        - name: number_of_clusters
+          description: Number of clusters in the Bisecting k-means model (widget: integer)
+          type: Integer
+          required: True
+        - name: tolerance
+          description: Convergency tolerance for the within-cluster sums of point-to-centroid distances. (widget: decimal)
+          type: Float
+          required: False
+        - name: max_iterations
+          description: Max iterations (widget: integer)
+          type: Integer
+          required: False
+        - name: seed
+          description: Seed (widget: integer)
+          type: Integer
+          required: False
+        - name: min_divisible_clusterSize
+          description: Minimum size allowed for a cluster to be split during the hierarchical partitioning process. (widget: decimal)
+          type: Float
+          required: False
+        - name: distance
+          description: The distance measure (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - euclidean: Euclidean
+           - cosine: Cosine
+      returns:
+
+    - name: lda_clustering
+      signature: Dataframe lda_clustering(Integer number_of_clusters, Integer max_iterations, String weight_col, String features, Integer seed, Integer checkpoint_interval, String optimizer, Float learning_offset, Float learning_decay, String subsampling_rate, Boolean optimize_doc_concentration, Float doc_concentration, Float topic_concentration, String topic_distribution_col, Boolean keep_last_checkpoint)
+      description: Alocação latente de Dirichlet. (id=2254)
+      parameters:
+        - name: number_of_clusters
+          description: Number of clusters in the LDA clustering model (widget: integer)
+          type: Integer
+          required: True
+        - name: max_iterations
+          description: Maximum number of iterations for the LDA clustering model (widget: integer)
+          type: Integer
+          required: False
+        - name: weight_col
+          description: Column containing weights for the LDA clustering model (widget: text)
+          type: String
+          required: False
+        - name: features
+          description: Features column for the LDA clustering model (widget: text)
+          type: String
+          required: False
+        - name: seed
+          description: Seed for random numbers in the LDA clustering model (widget: integer)
+          type: Integer
+          required: False
+        - name: checkpoint_interval
+          description: Checkpoint interval for the LDA clustering model (widget: integer)
+          type: Integer
+          required: False
+        - name: optimizer
+          description: Optimizer for the LDA clustering model (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - online
+        - name: learning_offset
+          description: Learning offset for the LDA clustering model (widget: decimal)
+          type: Float
+          required: False
+        - name: learning_decay
+          description: Learning decay for the LDA clustering model (widget: decimal)
+          type: Float
+          required: False
+        - name: subsampling_rate
+          description: Subsampling rate for the LDA clustering model (widget: text)
+          type: String
+          required: False
+        - name: optimize_doc_concentration
+          description: Optimize document concentration for the LDA clustering model (widget: checkbox)
+          type: Boolean
+          required: False
+        - name: doc_concentration
+          description: Document concentration for the LDA clustering model (widget: decimal)
+          type: Float
+          required: False
+        - name: topic_concentration
+          description: Topic concentration for the LDA clustering model (widget: decimal)
+          type: Float
+          required: False
+        - name: topic_distribution_col
+          description: Column for topic distribution in the LDA clustering model (widget: text)
+          type: String
+          required: False
+        - name: keep_last_checkpoint
+          description: Keep the last checkpoint for the LDA clustering model (widget: checkbox)
+          type: Boolean
+          required: False
+      returns:
+
+    - name: pic_clustering
+      signature: Dataframe pic_clustering(Integer number_of_clusters, String init_mode, Integer max_iterations, String weight_col)
+      description: Agrupamento de iteração de energia. (id=2253)
+      parameters:
+        - name: number_of_clusters
+          description: Number of clusters in the LDA model (widget: integer)
+          type: Integer
+          required: True
+        - name: init_mode
+          description: Initialization mode for the LDA model (widget: dropdown)
+          type: String
+          required: False
+          allowedValues:
+           - random
+           - degree
+        - name: max_iterations
+          description: Maximum number of iterations for the LDA model (widget: integer)
+          type: Integer
+          required: False
+        - name: weight_col
+          description: Column containing weights for the LDA model (widget: text)
+          type: String
+          required: False
+      returns:
+
+

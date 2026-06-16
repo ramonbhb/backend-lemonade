@@ -1,0 +1,36 @@
+replicaCount: 2
+
+image:
+  repository: lemonade-backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+api:
+  port: 8000
+  authDevMode: false
+
+spark:
+  mode: k8s
+  executorInstances: 4
+  executorMemory: 8g
+  maxExecutors: 20
+
+minio:
+  endpoint: http://minio:9000
+  bucket: lake
+
+keycloak:
+  url: http://keycloak:8080
+  realm: lemonade
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+monitoring:
+  enabled: true
+  prometheusPort: 9090
