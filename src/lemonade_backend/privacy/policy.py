@@ -4,6 +4,12 @@ import re
 from dataclasses import dataclass
 from typing import Any
 
+from lemonade_backend.spark.delta_io import (
+    TenantPathError,
+    enforce_tenant_access,
+    extract_tenant_from_uri,
+)
+
 PII_PATTERNS = {
     "cpf": re.compile(r"\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b"),
     "email": re.compile(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"),
@@ -61,11 +67,17 @@ class PrivacyPolicyEngine:
                 reason=f"Purpose '{purpose}' not allowed for operation '{operation_name}'",
             )
 
-        if input_ref and tenant_id not in input_ref:
-            return PolicyDecision(
-                allowed=False,
-                reason="Cross-tenant data access denied",
-            )
+        if input_ref:
+            try:
+                enforce_tenant_access(tenant_id, input_ref)
+            except TenantPathError as exc:
+                return PolicyDecision(allowed=False, reason=str(exc))
+            uri_tenant = extract_tenant_from_uri(input_ref)
+            if uri_tenant is None:
+                return PolicyDecision(
+                    allowed=False,
+                    reason="Input path must use s3a:// MinIO URI with tenant prefix",
+                )
 
         if schema_columns and pii_policy == "strict":
             referenced = self._extract_column_refs(parameters)

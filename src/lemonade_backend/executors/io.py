@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from typing import Any
 
 from pyspark.ml.feature import PCA, VectorAssembler
@@ -8,10 +7,10 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
 
 from lemonade_backend.executors.base import BaseSparkExecutor, ExecutionContext, ExecutionResult
+from lemonade_backend.db.datasets import resolve_read_data_path
 from lemonade_backend.spark.delta_io import (
     pipeline_step_path,
     read_delta,
-    resolve_data_source_path,
     write_delta,
 )
 
@@ -25,7 +24,7 @@ class ReadDataExecutor(BaseSparkExecutor):
         params: dict[str, Any],
         input_df: DataFrame | None,
     ) -> ExecutionResult:
-        path = resolve_data_source_path(ctx.tenant_id, params["data_source"])
+        path = resolve_read_data_path(ctx.tenant_id, params["data_source"])
         columns = ctx.metadata.get("columns")
         df = read_delta(ctx.spark, path, ctx.tenant_id, columns)
         out = pipeline_step_path(ctx.tenant_id, ctx.job_id, 0)

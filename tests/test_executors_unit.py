@@ -16,7 +16,7 @@ def test_tenant_base_path():
 
 def test_enforce_tenant_access_blocks_cross_tenant():
     try:
-        enforce_tenant_access("tenant-a", "s3://lake/tenant-b/data")
+        enforce_tenant_access("tenant-a", "s3a://lake/tenant-b/data")
         assert False, "Should have raised"
     except TenantPathError:
         pass
@@ -29,7 +29,7 @@ def test_model_card_generation():
         operation_name="linear_regression",
         parameters={"max_iter": 100},
         metrics={"rmse": 0.5},
-        dataset_ref="s3://lake/tenant-a/datasets/1",
+        dataset_ref="s3a://lake/tenant-a/datasets/1",
     )
     data = card.to_dict()
     assert data["operation_name"] == "linear_regression"

@@ -30,15 +30,29 @@ def audit_artifact_path(tenant_id: str, event_id: str) -> str:
     return f"s3a://{settings.audit_bucket}/{tenant_id}/{event_id}.json"
 
 
+def extract_tenant_from_uri(uri: str) -> str | None:
+    if not uri:
+        return None
+    match = _TENANT_PREFIX.match(uri)
+    return match.group(1) if match else None
+
+
 def enforce_tenant_access(tenant_id: str, uri: str) -> None:
     if not uri:
         return
-    match = _TENANT_PREFIX.match(uri)
-    if match and match.group(1) != tenant_id:
+    uri_tenant = extract_tenant_from_uri(uri)
+    if uri_tenant and uri_tenant != tenant_id:
         raise TenantPathError(f"Cross-tenant access denied: {uri}")
 
 
-def resolve_data_source_path(tenant_id: str, data_source_id: int) -> str:
+def resolve_data_source_path(
+    tenant_id: str,
+    data_source_id: int,
+    delta_path: str | None = None,
+) -> str:
+    if delta_path:
+        enforce_tenant_access(tenant_id, delta_path)
+        return delta_path
     return f"{tenant_base_path(tenant_id)}/datasets/{data_source_id}"
 
 

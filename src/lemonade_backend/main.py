@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from lemonade_backend.api.routes import audit, jobs, operations, pipelines
+from lemonade_backend.api.routes import audit, datasets, jobs, operations, pipelines
 from lemonade_backend.catalog.registry import register_all_executors
 from lemonade_backend.config import get_settings
 from lemonade_backend.db.session import init_db
@@ -22,6 +22,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.include_router(datasets.router)
 app.include_router(operations.router)
 app.include_router(jobs.router)
 app.include_router(pipelines.router)

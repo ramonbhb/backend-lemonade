@@ -64,6 +64,9 @@ docker compose up -d
 
 | Method | Path | Description |
 |--------|------|-------------|
+| `GET`  | `/v1/datasets` | List registered datasets |
+| `POST` | `/v1/datasets` | Register a dataset in the catalog |
+| `GET`  | `/v1/datasets/{id}` | Get dataset metadata and MinIO path |
 | `GET`  | `/health` | Health check |
 | `GET`  | `/v1/operations` | List all operations from `model.yaml` |
 | `GET`  | `/v1/operations/{name}` | Get operation schema |
@@ -190,7 +193,7 @@ s3a://{MINIO_BUCKET}/{tenant_id}/datasets/{data_source_id}
 
 For example, `data_source: 1` for tenant `dev-tenant` resolves to `s3a://lake/dev-tenant/datasets/1`.
 
-Before calling `read_data`, load your Delta dataset into that MinIO path (via Spark, the MinIO console, or `mc` CLI). The PostgreSQL `datasets` table holds optional metadata (name, schema, sensitive columns) for governance; path resolution today uses the convention above.
+Before calling `read_data`, load your Delta dataset into MinIO at the path above (via Spark, the MinIO console, or `mc` CLI). Optionally register it via `POST /v1/datasets` to store metadata (name, schema, sensitive columns) and override the default path.
 
 Example — upload data to MinIO with the MinIO client:
 

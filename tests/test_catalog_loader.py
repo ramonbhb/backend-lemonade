@@ -58,7 +58,19 @@ def test_privacy_policy_blocks_cross_tenant():
         tenant_id="tenant-a",
         purpose="model_training",
         parameters={"data_source": 1},
-        input_ref="s3://lake/tenant-b/datasets/1",
+        input_ref="s3a://lake/tenant-b/datasets/1",
+    )
+    assert not decision.allowed
+
+
+def test_privacy_policy_blocks_substring_tenant_match():
+    engine = PrivacyPolicyEngine()
+    decision = engine.evaluate(
+        operation_name="read_data",
+        tenant_id="dev",
+        purpose="model_training",
+        parameters={"data_source": 1},
+        input_ref="s3a://lake/dev-tenant/datasets/1",
     )
     assert not decision.allowed
 
