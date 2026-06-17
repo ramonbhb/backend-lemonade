@@ -9,7 +9,7 @@ Compatible with the [Lemonade Tahiti](https://dev.lemonade.org.br) operation cat
 - **27 ML/pipeline operations** — I/O, classification, regression, clustering, evaluation, and hyperparameter search
 - **Operation catalog from `model.yaml`** — auto-generated OpenAPI schemas and Pydantic validation
 - **Async job execution** — Redis + RQ workers running PySpark jobs
-- **Delta Lake on MinIO** — tenant-scoped S3-compatible storage with path enforcement
+- **Delta Lake on MinIO** — on-prem object storage (not AWS S3); Spark uses `s3a://` URIs to reach MinIO
 - **Responsible AI** — immutable audit trail, privacy policy engine, PII detection, OpenLineage → Marquez, model cards
 - **Multi-tenancy** — tenant-scoped data paths, Keycloak OAuth2 (dev mode for local testing)
 - **Production-ready manifests** — Docker Compose, Kubernetes, Helm, Spark Operator
@@ -75,6 +75,7 @@ docker compose up -d
 ### Run an operation
 
 ```bash
+# dataframe_ref uses s3a:// — Spark URI for MinIO, not AWS S3
 curl -X POST http://localhost:8000/v1/operations/linear_regression/run \
   -H "Content-Type: application/json" \
   -d '{
@@ -154,16 +155,51 @@ Copy [`.env.example`](.env.example) to `.env`. Key variables:
 |----------|---------|-------------|
 | `DATABASE_URL` | `postgresql+asyncpg://...` | PostgreSQL connection |
 | `REDIS_URL` | `redis://localhost:6379/0` | Job queue |
-| `MINIO_ENDPOINT` | `http://localhost:9000` | S3-compatible storage |
-| `MINIO_BUCKET` | `lake` | Data lake bucket |
+| `MINIO_ENDPOINT` | `http://localhost:9000` | MinIO server URL (on-prem object storage) |
+| `MINIO_ACCESS_KEY` | `minioadmin` | MinIO access key |
+| `MINIO_SECRET_KEY` | `minioadmin` | MinIO secret key |
+| `MINIO_BUCKET` | `lake` | MinIO bucket for the data lake |
 | `SPARK_MODE` | `local` | `local` or `k8s` |
 | `AUTH_DEV_MODE` | `true` | Bypass Keycloak for local dev |
 | `KEYCLOAK_URL` | — | Required when `AUTH_DEV_MODE=false` |
 | `MARQUEZ_URL` | `http://localhost:5000` | OpenLineage backend |
 
-## Dataset catalog
+## Storage & data lake
 
-The `read_data` operation resolves integer `data_source` IDs to Delta paths under `s3a://{bucket}/{tenant_id}/datasets/{id}`. Register datasets in the PostgreSQL `datasets` table before use.
+This project uses **MinIO** as on-prem object storage — **not AWS S3**. MinIO runs locally via Docker Compose (`http://localhost:9000`, console at `:9001`) or on your own infrastructure in production.
+
+Tables are stored as **Delta Lake** datasets inside MinIO. PySpark accesses MinIO through the Hadoop **S3A** filesystem, which is why paths look like `s3a://…`. That URI scheme is Spark’s way of addressing object storage; the actual backend is always your MinIO instance, configured via `MINIO_ENDPOINT` and related env vars.
+
+```
+MinIO bucket (lake)
+└── {tenant_id}/
+    ├── datasets/{data_source_id}/   ← Delta tables (read_data)
+    ├── pipelines/{job_id}/step-{n}/   ← pipeline intermediates
+    └── models/{job_id}/               ← trained models
+```
+
+Spark connects to MinIO in [`src/lemonade_backend/spark/session.py`](src/lemonade_backend/spark/session.py) by setting `spark.hadoop.fs.s3a.endpoint` to `MINIO_ENDPOINT`.
+
+### Dataset catalog
+
+The `read_data` operation maps an integer `data_source` ID to a Delta path by convention:
+
+```
+s3a://{MINIO_BUCKET}/{tenant_id}/datasets/{data_source_id}
+```
+
+For example, `data_source: 1` for tenant `dev-tenant` resolves to `s3a://lake/dev-tenant/datasets/1`.
+
+Before calling `read_data`, load your Delta dataset into that MinIO path (via Spark, the MinIO console, or `mc` CLI). The PostgreSQL `datasets` table holds optional metadata (name, schema, sensitive columns) for governance; path resolution today uses the convention above.
+
+Example — upload data to MinIO with the MinIO client:
+
+```bash
+mc alias set local http://localhost:9000 minioadmin minioadmin
+mc mb local/lake/dev-tenant/datasets/1 --ignore-existing
+# Write Delta data with PySpark or copy an existing Delta folder into that prefix
+```
+
 
 ## Responsible AI
 
